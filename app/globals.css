@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+:root {
+  --color-navy: #0b1120;
+  --color-navy-light: #111827;
+  --color-gold: #f5a623;
+  --color-gold-light: #fbbf24;
+}
+
+@theme {
+  --color-navy: #0b1120;
+  --color-navy-light: #111827;
+  --color-gold: #f5a623;
+  --color-gold-muted: #b47c1a;
+}
+
+body {
+  background-color: var(--color-navy);
+  color: #f9fafb;
+  font-family: var(--font-dm-sans), sans-serif;
+}
