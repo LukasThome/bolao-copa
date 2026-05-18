@@ -15,11 +15,12 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
-  role          Role      @default(USER)
+  role          Role       @default(USER)
   accounts      Account[]
   sessions      Session[]
   palpites      Palpite[]
-  createdAt     DateTime  @default(now())
+  loginLogs     LoginLog[]
+  createdAt     DateTime   @default(now())
 }
 
 model Account {
@@ -99,4 +100,14 @@ model Palpite {
   updatedAt    DateTime @updatedAt
 
   @@unique([userId, jogoId]) // um palpite por usuário por jogo
+}
+
+model LoginLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
 }

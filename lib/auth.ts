@@ -19,6 +19,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
   },
+  events: {
+    async signIn({ user }) {
+      if (user.id) {
+        await prisma.loginLog.create({ data: { userId: user.id } })
+      }
+    },
+  },
   pages: {
     signIn: '/login',
   },
