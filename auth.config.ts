@@ -8,6 +8,8 @@ export const authConfig = {
   providers: [Google],
   pages: { signIn: '/login' },
   session: { strategy: 'jwt' as const },
+  // Usa o host da requisição em vez de depender de AUTH_URL — necessário no Vercel
+  trustHost: true,
   callbacks: {
     jwt({ token, user }) {
       // Na primeira vez (login), user existe — salvamos id e role no token
