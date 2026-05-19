@@ -40,7 +40,17 @@ export function JogoCard({ jogo, meuPalpite }: Props) {
       className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-[#F5A623]/30 hover:bg-white/8"
     >
       <div className="mb-2 flex items-center justify-between">
-        <p className="text-xs text-gray-500">{formatarDataJogo(jogo.dataHora)}</p>
+        <p className="text-xs text-gray-500">
+          {formatarDataJogo(jogo.dataHora)}
+          <span className="ml-1 text-gray-600">
+            ({new Intl.DateTimeFormat('en-US', {
+              timeZone: jogo.fusoHorario,
+              timeZoneName: 'short',
+            })
+              .formatToParts(new Date(jogo.dataHora))
+              .find((p) => p.type === 'timeZoneName')?.value ?? ''})
+          </span>
+        </p>
         <StatusBadge jogo={jogo} aberto={aberto} />
       </div>
 

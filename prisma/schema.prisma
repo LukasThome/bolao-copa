@@ -78,6 +78,7 @@ model Jogo {
   timeCasa     String
   timeVisita   String
   dataHora     DateTime
+  fusoHorario  String    @default("America/New_York") // IANA timezone da cidade-sede
   fase         FaseJogo  @default(GRUPOS)
   grupo        String? // "A", "B", etc. — null para fase eliminatória
   placarCasa   Int? // null = resultado ainda não lançado

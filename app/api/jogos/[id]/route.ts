@@ -20,6 +20,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       timeCasa: body.timeCasa ?? jogo.timeCasa,
       timeVisita: body.timeVisita ?? jogo.timeVisita,
       dataHora: body.dataHora ? new Date(body.dataHora) : jogo.dataHora,
+      fusoHorario: body.fusoHorario ?? jogo.fusoHorario,
       fase: body.fase ?? jogo.fase,
       grupo: body.grupo !== undefined ? body.grupo : jogo.grupo,
     },

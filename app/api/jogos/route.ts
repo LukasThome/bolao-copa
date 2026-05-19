@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
 
   const body = await req.json()
-  const { timeCasa, timeVisita, dataHora, fase, grupo } = body
+  const { timeCasa, timeVisita, dataHora, fusoHorario, fase, grupo } = body
 
   if (!timeCasa || !timeVisita || !dataHora || !fase) {
     return NextResponse.json({ error: 'Campos obrigatórios ausentes' }, { status: 400 })
@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
       timeCasa,
       timeVisita,
       dataHora: new Date(dataHora),
+      fusoHorario: fusoHorario ?? 'America/New_York',
       fase,
       grupo: grupo ?? null,
     },

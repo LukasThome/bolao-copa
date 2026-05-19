@@ -108,18 +108,68 @@ UPDATE "User" SET role = 'ADMIN' WHERE email = 'seu@email.com';
 
 ## 7. Deploy no Vercel
 
-1. Acesse [vercel.com/new](https://vercel.com/new) e importe o repositório `bolao-copa`
-2. Na seção **Environment Variables**, adicione as mesmas 5 variáveis do `.env.local`
-   - Em `AUTH_URL`, use a URL final do Vercel: `https://bolao-copa.vercel.app`
-3. Clique em **Deploy**
+### 7.1 Instalar a CLI do Vercel (opcional, mas facilita)
 
-Após o primeiro deploy, copie a URL gerada e:
+```bash
+npm i -g vercel
+vercel login
+```
 
-- Atualize `AUTH_URL` nas variáveis de ambiente do Vercel com a URL real
-- No Google Cloud Console, adicione a URL de produção:
-  - Origens: `https://bolao-copa.vercel.app`
-  - Redirecionamento: `https://bolao-copa.vercel.app/api/auth/callback/google`
-- Faça um novo deploy para as variáveis entrarem em vigor
+### 7.2 Conectar o repositório
+
+1. Acesse [vercel.com/new](https://vercel.com/new)
+2. Clique em **Import Git Repository** e selecione `bolao-copa`
+3. Mantenha as configurações padrão (o Vercel detecta Next.js automaticamente)
+
+### 7.3 Adicionar variáveis de ambiente
+
+Antes de clicar em **Deploy**, expanda **Environment Variables** e adicione:
+
+| Variável | Valor |
+|---|---|
+| `DATABASE_URL` | URL do Supabase (igual ao `.env.local`) |
+| `AUTH_SECRET` | Mesma chave gerada com `openssl` |
+| `AUTH_URL` | `https://SEU-PROJETO.vercel.app` (use a URL que o Vercel vai gerar) |
+| `GOOGLE_CLIENT_ID` | Mesmo do `.env.local` |
+| `GOOGLE_CLIENT_SECRET` | Mesmo do `.env.local` |
+
+> **Dica:** se ainda não sabe a URL final, use qualquer valor em `AUTH_URL` agora e corrija no passo 7.5.
+
+### 7.4 Fazer o deploy
+
+Clique em **Deploy** e aguarde (~2 min). O Vercel vai:
+- Rodar `npm run build` (que inclui `prisma generate`)
+- Publicar em `https://SEU-PROJETO.vercel.app`
+
+### 7.5 Corrigir a URL após o primeiro deploy
+
+Após o deploy, copie a URL gerada (ex: `https://bolao-copa-xyz.vercel.app`) e:
+
+1. **Vercel → Settings → Environment Variables** → edite `AUTH_URL` com a URL real
+2. **Google Cloud Console → Credenciais → seu OAuth client** → adicione:
+   - Origens JS autorizadas: `https://bolao-copa-xyz.vercel.app`
+   - URIs de redirecionamento: `https://bolao-copa-xyz.vercel.app/api/auth/callback/google`
+3. No Vercel, clique em **Deployments → Redeploy** para as variáveis entrarem em vigor
+
+### 7.6 Aplicar o schema no banco de produção
+
+Após o deploy, execute localmente apontando para o banco de produção:
+
+```bash
+npm run db:push
+```
+
+O `DATABASE_URL` do `.env.local` já aponta para o Supabase de produção, então o schema é aplicado diretamente.
+
+### 7.7 Promover admin em produção
+
+No [SQL Editor do Supabase](https://supabase.com/dashboard), rode:
+
+```sql
+UPDATE "User" SET role = 'ADMIN' WHERE email = 'seu@email.com';
+```
+
+O usuário precisa ter feito login ao menos uma vez para existir na tabela.
 
 ---
 

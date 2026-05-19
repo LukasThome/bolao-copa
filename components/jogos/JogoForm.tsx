@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Jogo, FaseJogo } from '@prisma/client'
+import { CIDADES_SEDE, localParaUTC, utcParaLocal } from '@/lib/utils'
 
 const FASES: FaseJogo[] = ['GRUPOS', 'OITAVAS', 'QUARTAS', 'SEMIFINAL', 'TERCEIRO_LUGAR', 'FINAL']
 
@@ -14,8 +15,12 @@ type Props = {
 export function JogoForm({ jogo, onSuccess, onCancel }: Props) {
   const [timeCasa, setTimeCasa] = useState(jogo?.timeCasa ?? '')
   const [timeVisita, setTimeVisita] = useState(jogo?.timeVisita ?? '')
+  const [fusoHorario, setFusoHorario] = useState(
+    jogo?.fusoHorario ?? CIDADES_SEDE[0].fuso
+  )
+  // dataHora exibida no input = horário local da cidade-sede
   const [dataHora, setDataHora] = useState(
-    jogo ? new Date(jogo.dataHora).toISOString().slice(0, 16) : ''
+    jogo ? utcParaLocal(jogo.dataHora, jogo.fusoHorario) : ''
   )
   const [fase, setFase] = useState<FaseJogo>(jogo?.fase ?? 'GRUPOS')
   const [grupo, setGrupo] = useState(jogo?.grupo ?? '')
@@ -30,10 +35,13 @@ export function JogoForm({ jogo, onSuccess, onCancel }: Props) {
     const method = jogo ? 'PUT' : 'POST'
     const url = jogo ? `/api/jogos/${jogo.id}` : '/api/jogos'
 
+    // Converte o horário local da cidade para UTC antes de enviar
+    const dataHoraUTC = localParaUTC(dataHora, fusoHorario)
+
     const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ timeCasa, timeVisita, dataHora, fase, grupo: grupo || null }),
+      body: JSON.stringify({ timeCasa, timeVisita, dataHora: dataHoraUTC, fusoHorario, fase, grupo: grupo || null }),
     })
 
     if (res.ok) {
@@ -70,7 +78,24 @@ export function JogoForm({ jogo, onSuccess, onCancel }: Props) {
       </div>
 
       <div>
-        <label className="mb-1 block text-xs text-gray-400">Data e Hora</label>
+        <label className="mb-1 block text-xs text-gray-400">Cidade-sede</label>
+        <select
+          value={fusoHorario}
+          onChange={(e) => setFusoHorario(e.target.value)}
+          className="w-full rounded-xl border border-white/10 bg-[#0B1120] px-3 py-2 text-sm text-white focus:border-[#F5A623]/50 focus:outline-none"
+        >
+          {CIDADES_SEDE.map((c) => (
+            <option key={`${c.nome}-${c.fuso}`} value={c.fuso}>
+              {c.nome}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs text-gray-400">
+          Data e Hora <span className="text-gray-600">(horário local da cidade)</span>
+        </label>
         <input
           type="datetime-local"
           value={dataHora}
