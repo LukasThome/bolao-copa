@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import type { Jogo, FaseJogo } from '@prisma/client'
+import type { Jogo } from '@prisma/client'
 import { formatarDataJogo, labelFase } from '@/lib/utils'
 import { JogoForm } from './JogoForm'
 import { ResultadoForm } from './ResultadoForm'
@@ -45,7 +45,7 @@ export function AdminJogosClient({ jogos: initialJogos }: { jogos: JogoComCount[
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ timeCasa, timeVisita, dataHora, fase, grupo: grupo || null }),
       })
-      res.ok ? ok++ : errors++
+      if (res.ok) { ok++ } else { errors++ }
     }
 
     setImporting(false)

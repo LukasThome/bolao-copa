@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { PalpiteForm } from '@/components/palpites/PalpiteForm'
 import type { Jogo } from '@prisma/client'
@@ -16,6 +16,7 @@ const jogoBase: Jogo = {
   timeVisita: 'Argentina',
   fase: 'GRUPOS',
   grupo: 'A',
+  fusoHorario: 'America/Sao_Paulo',
   placarCasa: null,
   placarVisita: null,
   createdAt: new Date(),

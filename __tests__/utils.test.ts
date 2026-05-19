@@ -20,9 +20,14 @@ describe('Regras de tempo para palpites', () => {
   })
 
   describe('jogoEstaAberto', () => {
-    it('permite palpite quando o jogo ainda não começou', () => {
-      const futuro = new Date(Date.now() + 60_000)
+    it('permite palpite quando falta mais de 10 minutos', () => {
+      const futuro = new Date(Date.now() + 15 * 60_000)
       expect(jogoEstaAberto(futuro)).toBe(true)
+    })
+
+    it('bloqueia palpite quando falta menos de 10 minutos', () => {
+      const dentroDoCorte = new Date(Date.now() + 5 * 60_000)
+      expect(jogoEstaAberto(dentroDoCorte)).toBe(false)
     })
 
     it('bloqueia palpite quando o jogo já começou', () => {
@@ -30,9 +35,9 @@ describe('Regras de tempo para palpites', () => {
       expect(jogoEstaAberto(passado)).toBe(false)
     })
 
-    it('é o inverso de jogoJaIniciou', () => {
-      const data = new Date(Date.now() + 3600_000)
-      expect(jogoEstaAberto(data)).toBe(!jogoJaIniciou(data))
+    it('permite palpite exatamente 11 minutos antes', () => {
+      const onzeMinutos = new Date(Date.now() + 11 * 60_000)
+      expect(jogoEstaAberto(onzeMinutos)).toBe(true)
     })
   })
 })
